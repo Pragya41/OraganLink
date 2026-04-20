@@ -18,8 +18,10 @@
     </div>
     <div class="side-panel-footer">
         <button type="button" class="btn btn-secondary" id="closeBtnFooter">Close</button>
-        <div id="adminActions" style="display: none; gap: 12px;">
-            <button type="button" class="btn btn-danger" id="deleteBtn">Delete Record</button>
+        <div id="adminActions" style="display: none; gap: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-danger" id="deleteBtn">Delete</button>
+            <button type="button" class="btn btn-orange" id="lockBtn" style="display: none;">Lock Account</button>
+            <button type="button" class="btn btn-green" id="unlockBtn" style="display: none;">Unlock Account</button>
             <button type="button" class="btn btn-primary" id="saveBtn">Save Changes</button>
         </div>
     </div>
@@ -39,6 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const panelIdInput = document.getElementById('panelId');
     const panelActionInput = document.getElementById('panelAction');
     const deleteBtn = document.getElementById('deleteBtn');
+    const lockBtn = document.getElementById('lockBtn');
+    const unlockBtn = document.getElementById('unlockBtn');
     const saveBtn = document.getElementById('saveBtn');
 
     // Safe role check from session
@@ -106,6 +110,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isAdmin || (isHospital && isOwner)) {
                 adminActions.style.setProperty('display', 'flex', 'important');
                 if (closeBtnFooter) closeBtnFooter.innerText = 'Cancel';
+                
+                // Show/Hide Lock buttons for users
+                if (isAdmin && (tableId === 'memberTable' || tableId === 'hospitalTable')) {
+                    lockBtn.style.display = 'block';
+                    unlockBtn.style.display = 'block';
+                } else {
+                    lockBtn.style.display = 'none';
+                    unlockBtn.style.display = 'none';
+                }
             } else {
                 adminActions.style.setProperty('display', 'none', 'important');
                 if (closeBtnFooter) closeBtnFooter.innerText = 'Close';
@@ -196,6 +209,68 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     panelActionInput.value = action;
                     panelForm.submit();
+                };
+            }
+
+            if (lockBtn) {
+                lockBtn.onclick = function() {
+                    if (confirm('Lock this account? User will not be able to login.')) {
+                        const form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = contextPath + '/admin';
+                        
+                        const actionInput = document.createElement('input');
+                        actionInput.type = 'hidden';
+                        actionInput.name = 'action';
+                        actionInput.value = 'lockUser';
+
+                        const idInput = document.createElement('input');
+                        idInput.type = 'hidden';
+                        idInput.name = 'id';
+                        idInput.value = panelIdInput.value;
+
+                        const roleInput = document.createElement('input');
+                        roleInput.type = 'hidden';
+                        roleInput.name = 'role';
+                        roleInput.value = tableId === 'memberTable' ? 'MEMBER' : 'HOSPITAL';
+
+                        form.appendChild(actionInput);
+                        form.appendChild(idInput);
+                        form.appendChild(roleInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                };
+            }
+
+            if (unlockBtn) {
+                unlockBtn.onclick = function() {
+                    if (confirm('Unlock this account?')) {
+                        const form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = contextPath + '/admin';
+                        
+                        const actionInput = document.createElement('input');
+                        actionInput.type = 'hidden';
+                        actionInput.name = 'action';
+                        actionInput.value = 'unlockUser';
+
+                        const idInput = document.createElement('input');
+                        idInput.type = 'hidden';
+                        idInput.name = 'id';
+                        idInput.value = panelIdInput.value;
+
+                        const roleInput = document.createElement('input');
+                        roleInput.type = 'hidden';
+                        roleInput.name = 'role';
+                        roleInput.value = tableId === 'memberTable' ? 'MEMBER' : 'HOSPITAL';
+
+                        form.appendChild(actionInput);
+                        form.appendChild(idInput);
+                        form.appendChild(roleInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
                 };
             }
         }

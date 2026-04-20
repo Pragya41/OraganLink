@@ -109,6 +109,20 @@ public class UserDao {
              throw new RuntimeException(e);
          }
      }
+     public boolean updateProfileInfo(int id, String fullName, String email, String phone) {
+         String sql = "UPDATE users SET full_name=?, email=?, phone=? WHERE id=?";
+         try (Connection conn = DBConnection.getInstance().getConnection();
+              PreparedStatement ps = conn.prepareStatement(sql)) {
+             ps.setString(1, fullName);
+             ps.setString(2, email);
+             ps.setString(3, phone);
+             ps.setInt(4, id);
+             return ps.executeUpdate() > 0;
+         } catch (SQLException e) {
+             System.err.println("UserDao.updateProfileInfo: " + e.getMessage());
+             throw new RuntimeException(e);
+         }
+     }
      public boolean updatePassword(int userId, String hashedPassword) {
          String sql = "UPDATE users SET password=? WHERE id=?";
          try (Connection conn = DBConnection.getInstance().getConnection();
@@ -191,5 +205,17 @@ public class UserDao {
              System.err.println("UserDao.isEmailUnique: " + e.getMessage());
          }
          return false;
+     }
+     public boolean setLockStatus(int id, boolean locked) {
+         String sql = "UPDATE users SET is_locked=? WHERE id=?";
+         try (Connection conn = DBConnection.getInstance().getConnection();
+              PreparedStatement ps = conn.prepareStatement(sql)) {
+             ps.setBoolean(1, locked);
+             ps.setInt(2, id);
+             return ps.executeUpdate() > 0;
+         } catch (SQLException e) {
+             System.err.println("UserDao.setLockStatus: " + e.getMessage());
+             throw new RuntimeException(e);
+         }
      }
  }

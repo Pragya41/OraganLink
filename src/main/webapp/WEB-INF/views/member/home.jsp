@@ -1,6 +1,6 @@
-<%-- WEB-INF/views/member/home.jsp --%>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-        <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             <!DOCTYPE html>
             <html lang="en">
 
@@ -16,116 +16,147 @@
                     <main class="main-content">
                         <div class="page-header">
                             <div>
-                                <h1>Personal Health Portal</h1>
-                                <p class="text-muted">Welcome, <strong>
-                                        <c:out value="${sessionScope.fullName}" />
-                                    </strong>. Manage your donation journey here.</p>
+                                <h1>Member Dashboard</h1>
+                                <p class="text-muted">Welcome back, <strong><c:out value="${sessionScope.fullName}" /></strong>.</p>
                             </div>
                             <div class="header-actions">
-                                <c:if test="${not empty sessionScope.bloodType}">
-                                    <span class="blood-badge" style="font-size: 1rem; padding: 8px 16px;">
-                                        Blood Group:
-                                        <c:out value="${sessionScope.bloodType}" />
-                                    </span>
-                                </c:if>
-                                <a href="${pageContext.request.contextPath}/member/profile" class="btn btn-secondary">
-                                    &#128100; My Profile
-                                </a>
+                                <a href="${pageContext.request.contextPath}/member/organs" class="btn btn-primary">&#129505; Browse Organs</a>
+                                <a href="${pageContext.request.contextPath}/member/myRequests" class="btn btn-secondary">&#128203; My Requests</a>
                             </div>
                         </div>
 
-                        <div class="stats-grid">
+                        <!-- Statistics Section -->
+                        <h2 class="section-title">Overview Statistics</h2>
+                        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                             <div class="stat-card stat-blue">
-                                <div class="stat-label">Request History</div>
-                                <div class="stat-value">
-                                    <c:out value="${stats.myRequests}" />
-                                </div>
-                                <a href="${pageContext.request.contextPath}/member/myRequests"
-                                    class="btn btn-sm btn-secondary">View Records</a>
-                            </div>
-                            <div class="stat-card stat-orange">
-                                <div class="stat-label">Awaiting Review</div>
-                                <div class="stat-value">
-                                    <c:out value="${stats.pending}" />
-                                </div>
-                                <a href="${pageContext.request.contextPath}/member/myRequests"
-                                    class="btn btn-sm btn-secondary">Track Status</a>
-                            </div>
-                            <div class="stat-card stat-primary">
-                                <div class="stat-label">Confirmed Matches</div>
-                                <div class="stat-value">
-                                    <c:out value="${stats.approved}" />
-                                </div>
-                                <a href="${pageContext.request.contextPath}/member/myRequests"
-                                    class="btn btn-sm btn-secondary">Next Steps</a>
+                                <div class="stat-label">Total Available Organs</div>
+                                <div class="stat-value"><c:out value="${stats.totalAvailable}" /></div>
                             </div>
                             <div class="stat-card stat-green">
-                                <div class="stat-label">Life Saved</div>
-                                <div class="stat-value">
-                                    <c:out value="${stats.completed}" />
-                                </div>
-                                <span class="badge badge-green" style="margin-top: 8px;">Success History</span>
+                                <div class="stat-label">Compatible with You</div>
+                                <div class="stat-value"><c:out value="${stats.compatible}" /></div>
+                            </div>
+                            <div class="stat-card stat-primary">
+                                <div class="stat-label">Total Requests</div>
+                                <div class="stat-value"><c:out value="${stats.myRequests}" /></div>
+                            </div>
+                            <div class="stat-card stat-orange">
+                                <div class="stat-label">Pending</div>
+                                <div class="stat-value"><c:out value="${stats.pending}" /></div>
+                            </div>
+                        </div>
+                        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 16px;">
+                            <div class="stat-card">
+                                <div class="stat-label">Approved</div>
+                                <div class="stat-value text-green"><c:out value="${stats.approved}" /></div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Completed</div>
+                                <div class="stat-value text-blue"><c:out value="${stats.completed}" /></div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Rejected</div>
+                                <div class="stat-value text-red"><c:out value="${stats.rejected}" /></div>
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-                            <section class="card">
-                                <h2>Public Bulletins</h2>
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Topic</th>
-                                            <th>Publication Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach items="${recentAnnouncements}" var="a">
+                        <div class="dashboard-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 32px;">
+                            <div class="main-widgets">
+                                <!-- Active Requests Widget -->
+                                <section class="card mb-4">
+                                    <div class="card-header">
+                                        <h2>Active Requests</h2>
+                                        <a href="${pageContext.request.contextPath}/member/myRequests" class="text-link">View All</a>
+                                    </div>
+                                    <table class="data-table">
+                                        <thead>
                                             <tr>
-                                                <td><strong>
-                                                        <c:out value="${a.title}" />
-                                                    </strong></td>
-                                                <td>
-                                                    <fmt:formatDate value="${a.createdAt}" pattern="dd MMM yyyy" />
-                                                </td>
+                                                <th>Organ</th>
+                                                <th>Hospital</th>
+                                                <th>Status</th>
                                             </tr>
-                                        </c:forEach>
-                                        <c:if test="${empty recentAnnouncements}">
-                                            <tr>
-                                                <td colspan="2" class="text-center">No community announcements at this
-                                                    time.</td>
-                                            </tr>
-                                        </c:if>
-                                    </tbody>
-                                </table>
-                            </section>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach items="${activeRequests}" var="r">
+                                                <tr>
+                                                    <td><c:out value="${r.organType}"/></td>
+                                                    <td><c:out value="${r.hospitalName != null ? r.hospitalName : 'Pending'}"/></td>
+                                                    <td>
+                                                        <span class="badge ${r.status == 'APPROVED' ? 'badge-green' : 'badge-yellow'}">
+                                                            <c:out value="${r.status}"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                            <c:if test="${empty activeRequests}">
+                                                <tr><td colspan="3" class="text-center">No active requests.</td></tr>
+                                            </c:if>
+                                        </tbody>
+                                    </table>
+                                </section>
 
-                            <section class="card">
-                                <h2>Portal Actions</h2>
-                                <div style="display: flex; flex-direction: column; gap: 12px;">
-                                    <a href="${pageContext.request.contextPath}/member/organs"
-                                        class="btn btn-primary btn-full">
-                                        &#129505; Browse Organs
-                                    </a>
-                                    <a href="${pageContext.request.contextPath}/member/myRequests"
-                                        class="btn btn-secondary btn-full">
-                                        &#128203; Track My Applications
-                                    </a>
-                                    <a href="${pageContext.request.contextPath}/member/profile"
-                                        class="btn btn-secondary btn-full">
-                                        &#128221; Account Settings
-                                    </a>
-                                    <a href="${pageContext.request.contextPath}/member/announcements"
-                                        class="btn btn-secondary btn-full">
-                                        &#128227; Latest News
-                                    </a>
-                                </div>
-                                <div style="margin-top: 24px; padding: 16px; background: #eff6ff; border-radius: 8px;">
-                                    <p style="color: #1e40af; font-size: 0.85rem; font-weight: 500;">
-                                        <strong>Did you know?</strong> One organ donor can save up to eight lives and
-                                        improve the lives of as many as 75 more.
-                                    </p>
-                                </div>
-                            </section>
+                                <!-- Recently Compatible Organs Widget -->
+                                <section class="card mb-4">
+                                    <div class="card-header">
+                                        <h2>New Compatible Organs</h2>
+                                        <a href="${pageContext.request.contextPath}/member/organs" class="text-link">Browse All</a>
+                                    </div>
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Organ</th>
+                                                <th>Hospital</th>
+                                                <th>Added On</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach items="${recentCompatible}" var="o">
+                                                <tr>
+                                                    <td><c:out value="${o.organType}"/></td>
+                                                    <td><c:out value="${o.hospitalName}"/></td>
+                                                    <td><fmt:formatDate value="${o.registeredAt}" pattern="dd MMM"/></td>
+                                                </tr>
+                                            </c:forEach>
+                                            <c:if test="${empty recentCompatible}">
+                                                <tr><td colspan="3" class="text-center">No compatible organs listed yet.</td></tr>
+                                            </c:if>
+                                        </tbody>
+                                    </table>
+                                </section>
+                            </div>
+
+                            <div class="side-widgets">
+                                <!-- Profile Summary Widget -->
+                                <section class="card mb-4 profile-summary">
+                                    <h2>Profile Summary</h2>
+                                    <div class="summary-item">
+                                        <label>Blood Type:</label>
+                                        <span class="blood-badge"><c:out value="${member.bloodType != null ? member.bloodType : 'Not Set'}"/></span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <label>Status:</label>
+                                        <span class="badge badge-blue">Registered Member</span>
+                                    </div>
+                                    <div class="summary-item" style="margin-top: 16px;">
+                                        <p style="font-size: 0.85rem; color: #64748b;"><c:out value="${member.address}"/></p>
+                                    </div>
+                                    <a href="${pageContext.request.contextPath}/member/profile" class="btn btn-sm btn-secondary btn-full" style="margin-top: 16px;">Update Profile</a>
+                                </section>
+
+                                <!-- Announcements Widget -->
+                                <section class="card">
+                                    <h2>Latest Announcements</h2>
+                                    <ul class="announcement-list" style="list-style: none; padding: 0;">
+                                        <c:forEach items="${recentAnnouncements}" var="a">
+                                            <li style="padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                                <div style="font-weight: 600; font-size: 0.95rem;"><c:out value="${a.title}"/></div>
+                                                <small class="text-muted"><fmt:formatDate value="${a.createdAt}" pattern="dd MMM yyyy"/></small>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                    <a href="${pageContext.request.contextPath}/member/announcements" class="text-link" style="display: block; margin-top: 16px; text-align: center;">View All</a>
+                                </section>
+                            </div>
                         </div>
                     </main>
                     <jsp:include page="../common/footer.jsp" />

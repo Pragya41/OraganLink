@@ -38,6 +38,27 @@ public class HospitalController extends HttpServlet {
                     Map<String, Integer> stats = dash.getHospitalStats(userId);
                     req.setAttribute("stats", stats);
                     req.setAttribute("recentAnnouncements", annDao.findRecent(5));
+
+                    // Widget Data
+                    java.util.List<com.organlink.model.DonationRequest> pending = reqDao.findByHospitalAndStatus(userId, "PENDING");
+                    req.setAttribute("pendingRequests", pending.size() > 5 ? pending.subList(0, 5) : pending);
+
+                    java.util.List<com.organlink.model.DonationRequest> approved = reqDao.findByHospitalAndStatus(userId, "APPROVED");
+                    req.setAttribute("approvedRequests", approved.size() > 5 ? approved.subList(0, 5) : approved);
+
+                    java.util.List<com.organlink.model.DonationRequest> completed = reqDao.findByHospitalAndStatus(userId, "COMPLETED");
+                    req.setAttribute("completionHistory", completed.size() > 5 ? completed.subList(0, 5) : completed);
+
+                    // Available organs by type breakdown
+                    java.util.List<com.organlink.model.Organ> myOrgans = organDao.findByHospital(userId);
+                    Map<String, Integer> typeCounts = new java.util.HashMap<>();
+                    for (com.organlink.model.Organ o : myOrgans) {
+                        if ("AVAILABLE".equals(o.getStatus())) {
+                            typeCounts.put(o.getOrganType(), typeCounts.getOrDefault(o.getOrganType(), 0) + 1);
+                        }
+                    }
+                    req.setAttribute("organTypeBreakdown", typeCounts);
+
                     forward(req, resp, "home");
                     break;
 
@@ -48,7 +69,8 @@ public class HospitalController extends HttpServlet {
                     break;
 
                 case "/organs":
-                    req.setAttribute("organs", organDao.findByHospital(userId));
+                    req.setAttribute("myOrgans", organDao.findByHospital(userId));
+                    req.setAttribute("allOrgans", organDao.findAll());
                     forward(req, resp, "organs");
                     break;
 

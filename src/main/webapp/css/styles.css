@@ -381,6 +381,8 @@ a:hover {
 
 .btn-success { background: var(--accent); color: #fff; }
 .btn-danger { background: var(--danger); color: #fff; }
+.btn-orange { background: var(--warning); color: #fff; }
+.btn-green { background: var(--accent); color: #fff; }
 
 .btn-full { display: flex; width: 100%; }
 .btn-sm { padding: 6px 12px; font-size: 0.825rem; }

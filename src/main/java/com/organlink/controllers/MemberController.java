@@ -2,8 +2,10 @@ package com.organlink.controllers;
 
 import com.organlink.dao.*;
 import com.organlink.model.Member;
+import com.organlink.model.Organ;
 import com.organlink.service.DashboardService;
 import com.organlink.service.DonationRequestService;
+import com.organlink.util.ValidationUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,6 +21,7 @@ public class MemberController extends HttpServlet {
     private final DonationRequestDao reqDao = new DonationRequestDao();
     private final AnnouncementDao annDao = new AnnouncementDao();
     private final MemberDao memberDao = new MemberDao();
+    private final UserDao userDao = new UserDao();
     private final DashboardService dash = new DashboardService();
     private final DonationRequestService reqSvc = new DonationRequestService();
 
@@ -35,22 +38,65 @@ public class MemberController extends HttpServlet {
         try {
             switch (path) {
 
-                case "/home":
-                    Map<String, Integer> stats = dash.getMemberStats(userId);
+                case "/home": {
+                    String bt = (String) req.getSession().getAttribute("bloodType");
+                    Map<String, Integer> stats = dash.getMemberStats(userId, bt);
+                    
                     req.setAttribute("stats", stats);
                     req.setAttribute("recentAnnouncements", annDao.findRecent(5));
+                    req.setAttribute("member", memberDao.findByUserId(userId));
+                    
+                    // Recently compatible organs (limit 5)
+                    java.util.List<Organ> allAvail = organDao.findAvailable();
+                    java.util.List<Organ> recentComp = new java.util.ArrayList<>();
+                    if (bt != null) {
+                        for (Organ o : allAvail) {
+                            if (ValidationUtil.isCompatible(o.getBloodType(), bt)) {
+                                recentComp.add(o);
+                                if (recentComp.size() >= 5) break;
+                            }
+                        }
+                    }
+                    req.setAttribute("recentCompatible", recentComp);
+                    
+                    // Active requests (limit 5)
+                    java.util.List<com.organlink.model.DonationRequest> myReqs = reqDao.findByMember(userId);
+                    java.util.List<com.organlink.model.DonationRequest> activeReqs = new java.util.ArrayList<>();
+                    for (com.organlink.model.DonationRequest r : myReqs) {
+                        if (!"REJECTED".equals(r.getStatus()) && !"COMPLETED".equals(r.getStatus())) {
+                            activeReqs.add(r);
+                            if (activeReqs.size() >= 5) break;
+                        }
+                    }
+                    req.setAttribute("activeRequests", activeReqs);
+
                     forward(req, resp, "home");
                     break;
+                }
 
                 case "/announcements":
                     req.setAttribute("announcements", annDao.findAll());
                     forward(req, resp, "announcements");
                     break;
 
-                case "/organs":
-                    req.setAttribute("organs", organDao.findAvailable());
+                case "/organs": {
+                    String bt = (String) req.getSession().getAttribute("bloodType");
+                    java.util.List<Organ> allAvailable = organDao.findAvailable();
+                    java.util.List<Organ> compatible = new java.util.ArrayList<>();
+
+                    if (bt != null) {
+                        for (Organ o : allAvailable) {
+                            if (ValidationUtil.isCompatible(o.getBloodType(), bt)) {
+                                compatible.add(o);
+                            }
+                        }
+                    }
+
+                    req.setAttribute("organs", allAvailable);
+                    req.setAttribute("compatibleOrgans", compatible);
                     forward(req, resp, "organs");
                     break;
+                }
 
                 case "/myRequests":
                     req.setAttribute("requests", reqDao.findByMember(userId));
@@ -102,14 +148,25 @@ public class MemberController extends HttpServlet {
                     if (m == null)
                         m = new Member();
 
-                    m.setUserId(userId);
-                    m.setBloodType(req.getParameter("bloodType"));
-                    m.setAddress(req.getParameter("address"));
+                    String fullName = req.getParameter("fullName");
+                    String email = req.getParameter("email");
+                    String phone = req.getParameter("phone");
+                    String bloodType = req.getParameter("bloodType");
+                    String address = req.getParameter("address");
 
+                    // Update User table
+                    userDao.updateProfileInfo(userId, fullName, email, phone);
+
+                    // Update Member table
+                    m.setUserId(userId);
+                    m.setBloodType(bloodType);
+                    m.setAddress(address);
                     memberDao.updateMember(m);
 
-                    // Update session blood type
-                    req.getSession().setAttribute("bloodType", m.getBloodType());
+                    // Update session attributes
+                    HttpSession session = req.getSession();
+                    session.setAttribute("fullName", fullName);
+                    session.setAttribute("bloodType", bloodType);
 
                     resp.sendRedirect(req.getContextPath()
                             + "/member/profile?msg=updated");

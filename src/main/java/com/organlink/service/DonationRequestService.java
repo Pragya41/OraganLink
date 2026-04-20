@@ -1,15 +1,26 @@
 // com/organlink/service/DonationRequestService.java
 package com.organlink.service;
 import com.organlink.dao.DonationRequestDao;
+import com.organlink.dao.MemberDao;
 import com.organlink.dao.OrganDao;
 import com.organlink.model.DonationRequest;
+import com.organlink.model.Member;
 import com.organlink.model.Organ;
+import com.organlink.util.ValidationUtil;
 public class DonationRequestService {
     private final DonationRequestDao requestDao = new DonationRequestDao();
     private final OrganDao organDao = new OrganDao();
+    private final MemberDao memberDao = new MemberDao();
+
     public boolean submitRequest(int memberUserId, int organId) {
         Organ organ = organDao.findById(organId);
         if (organ == null || !"AVAILABLE".equals(organ.getStatus())) return false;
+
+        Member member = memberDao.findByUserId(memberUserId);
+        if (member == null || !ValidationUtil.isCompatible(organ.getBloodType(), member.getBloodType())) {
+            return false;
+        }
+
         DonationRequest req = new DonationRequest();
         req.setMemberId(memberUserId);
         req.setOrganId(organId);

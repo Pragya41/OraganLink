@@ -1,4 +1,4 @@
-<%-- WEB-INF/views/member/myRequests.jsp --%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
@@ -54,7 +54,7 @@ badge-red">REJECTED</span></c:otherwise>
                                     <c:when test="${r.resolvedAt != null}">
                                         <fmt:formatDate value="${r.resolvedAt}" pattern="dd MMM yyyy"/>
                                     </c:when>
-                                    <c:otherwise>—</c:otherwise>
+                                    <c:otherwise>&mdash;</c:otherwise>
                                 </c:choose>
                             </td>
                         </tr>

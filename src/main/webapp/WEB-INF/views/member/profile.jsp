@@ -19,6 +19,21 @@ successfully!</div></c:if>
             <form method="post" action="${pageContext.request.contextPath}/member">
                 <input type="hidden" name="action" value="updateProfile"/>
                 <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" name="fullName" value="<c:out value='${member.fullName}'/>" required/>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" name="email" value="<c:out value='${member.email}'/>" required/>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="text" name="phone" value="<c:out value='${member.phone}'/>" required/>
+                </div>
+
+                <div class="form-group">
                     <label>Blood Type *</label>
                     <select name="bloodType" required>
                         <option value="">-- Select --</option>
@@ -31,11 +46,11 @@ successfully!</div></c:if>
                 </div>
 
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Residential Address</label>
                     <input type="text" name="address" value="<c:out value='${member.address}'/>"/>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">Save Profile Changes</button>
                 </div>
             </form>
         </div>

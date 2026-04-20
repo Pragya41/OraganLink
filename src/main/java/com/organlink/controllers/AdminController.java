@@ -36,6 +36,45 @@ public class AdminController extends HttpServlet {
                     Map<String, Integer> stats = dash.getAdminStats();
                     req.setAttribute("stats", stats);
                     req.setAttribute("recentAnnouncements", annDao.findRecent(5));
+                    
+                    // Recent Activities
+                    java.util.List<User> hospitals = userDao.findByRole("HOSPITAL");
+                    req.setAttribute("recentHospitals", hospitals.size() > 5 ? hospitals.subList(0, 5) : hospitals);
+                    
+                    java.util.List<User> members = userDao.findByRole("MEMBER");
+                    req.setAttribute("recentMembers", members.size() > 5 ? members.subList(0, 5) : members);
+                    
+                    java.util.List<com.organlink.model.DonationRequest> allReqs = reqDao.findAll();
+                    req.setAttribute("recentRequests", allReqs.size() > 5 ? allReqs.subList(0, 5) : allReqs);
+                    
+                    java.util.List<com.organlink.model.DonationRequest> completed = new java.util.ArrayList<>();
+                    for (com.organlink.model.DonationRequest r : allReqs) {
+                        if ("COMPLETED".equals(r.getStatus())) completed.add(r);
+                    }
+                    req.setAttribute("recentCompleted", completed.size() > 5 ? completed.subList(0, 5) : completed);
+
+                    // Breakdowns for Charts
+                    java.util.List<com.organlink.model.Organ> allOrgans = organDao.findAll();
+                    Map<String, Integer> typeBreakdown = new java.util.HashMap<>();
+                    Map<String, Integer> bloodBreakdown = new java.util.HashMap<>();
+                    for (com.organlink.model.Organ o : allOrgans) {
+                        if ("AVAILABLE".equals(o.getStatus())) {
+                            typeBreakdown.put(o.getOrganType(), typeBreakdown.getOrDefault(o.getOrganType(), 0) + 1);
+                            bloodBreakdown.put(o.getBloodType(), bloodBreakdown.getOrDefault(o.getBloodType(), 0) + 1);
+                        }
+                    }
+                    req.setAttribute("typeBreakdown", typeBreakdown);
+                    req.setAttribute("bloodBreakdown", bloodBreakdown);
+
+                    // Hospital Leaderboard (Completed Transplants)
+                    Map<String, Integer> leaderboard = new java.util.HashMap<>();
+                    for (com.organlink.model.DonationRequest r : allReqs) {
+                        if ("COMPLETED".equals(r.getStatus()) && r.getHospitalName() != null) {
+                            leaderboard.put(r.getHospitalName(), leaderboard.getOrDefault(r.getHospitalName(), 0) + 1);
+                        }
+                    }
+                    req.setAttribute("hospitalLeaderboard", leaderboard);
+
                     forward(req, resp, "home");
                     break;
 
@@ -167,6 +206,28 @@ public class AdminController extends HttpServlet {
 
                     resp.sendRedirect(req.getContextPath()
                             + "/admin/members?msg=removedLast");
+                    break;
+                }
+
+                case "lockUser": {
+                    int id = Integer.parseInt(req.getParameter("id"));
+                    userDao.setLockStatus(id, true);
+                    String role = req.getParameter("role");
+                    String redirect = "/admin/home";
+                    if ("HOSPITAL".equals(role)) redirect = "/admin/hospitals";
+                    else if ("MEMBER".equals(role)) redirect = "/admin/members";
+                    resp.sendRedirect(req.getContextPath() + redirect + "?msg=locked");
+                    break;
+                }
+
+                case "unlockUser": {
+                    int id = Integer.parseInt(req.getParameter("id"));
+                    userDao.setLockStatus(id, false);
+                    String role = req.getParameter("role");
+                    String redirect = "/admin/home";
+                    if ("HOSPITAL".equals(role)) redirect = "/admin/hospitals";
+                    else if ("MEMBER".equals(role)) redirect = "/admin/members";
+                    resp.sendRedirect(req.getContextPath() + redirect + "?msg=unlocked");
                     break;
                 }
 

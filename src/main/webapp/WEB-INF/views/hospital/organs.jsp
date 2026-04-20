@@ -12,53 +12,77 @@
 <div class="app-wrapper">
     <jsp:include page="../common/nav.jsp"/>
     <main class="main-content">
-        <div class="page-header">
-            <h1>My Registered Organs</h1>
-            <div class="header-actions">
-                <a href="${pageContext.request.contextPath}/hospital/addOrgan" class="btn
-btn-primary">+ Add Organ</a>
-            </div>
-        </div>
-        <c:if test="${param.msg == 'added'}"> <div class="alert alert-success">Organ
-registered.</div></c:if>
-        <c:if test="${param.msg == 'deleted'}"><div class="alert alert-success">Organ
-removed.</div></c:if>
-        <div class="card">
-            <table class="data-table" id="organTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Organ Type</th>
-                        <th>Blood Type</th>
-                        <th>Status</th>
-                        <th>Registered</th>
-                    </tr>
-                </thead>
-                <tbody>
- <c:forEach items="${organs}" var="o">
+        <section class="mb-4">
+            <h2 class="section-title">My Registered Organs</h2>
+            <div class="card">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td><c:out value="${o.id}"/></td>
-                            <td><c:out value="${o.organType}"/></td>
-                            <td><span class="blood-badge"><c:out value="${o.bloodType}"/></span></td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${o.status == 'AVAILABLE'}"> <span class="badge
-badge-green">AVAILABLE</span></c:when>
-                                    <c:when test="${o.status == 'RESERVED'}"> <span class="badge
-badge-orange">RESERVED</span></c:when>
-                                    <c:otherwise> <span class="badge
-badge-blue">TRANSPLANTED</span></c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td><fmt:formatDate value="${o.registeredAt}" pattern="dd MMM yyyy"/></td>
+                            <th>ID</th>
+                            <th>Organ Type</th>
+                            <th>Blood Type</th>
+                            <th>Status</th>
+                            <th>Registered</th>
                         </tr>
-                    </c:forEach>
-                    <c:if test="${empty organs}">
-                        <tr><td colspan="5" class="text-center">No organs registered yet.</td></tr>
-                    </c:if>
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${myOrgans}" var="o">
+                            <tr>
+                                <td><c:out value="${o.id}"/></td>
+                                <td><c:out value="${o.organType}"/></td>
+                                <td><span class="blood-badge"><c:out value="${o.bloodType}"/></span></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${o.status == 'AVAILABLE'}"> <span class="badge badge-green">AVAILABLE</span></c:when>
+                                        <c:when test="${o.status == 'RESERVED'}"> <span class="badge badge-orange">RESERVED</span></c:when>
+                                        <c:otherwise> <span class="badge badge-blue">TRANSPLANTED</span></c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td><fmt:formatDate value="${o.registeredAt}" pattern="dd MMM yyyy"/></td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty myOrgans}">
+                            <tr><td colspan="5" class="text-center">No organs registered by your hospital yet.</td></tr>
+                        </c:if>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">All Platform Organs</h2>
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Organ</th>
+                            <th>Blood Type</th>
+                            <th>Hospital</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${allOrgans}" var="o">
+                            <tr>
+                                <td><c:out value="${o.id}"/></td>
+                                <td><c:out value="${o.organType}"/></td>
+                                <td><span class="blood-badge"><c:out value="${o.bloodType}"/></span></td>
+                                <td><c:out value="${o.hospitalName}"/></td>
+                                <td>
+                                    <span class="badge ${o.status == 'AVAILABLE' ? 'badge-green' : (o.status == 'RESERVED' ? 'badge-orange' : 'badge-blue')}">
+                                        <c:out value="${o.status}"/>
+                                    </span>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty allOrgans}">
+                            <tr><td colspan="5" class="text-center">No organs found on the platform.</td></tr>
+                        </c:if>
+                    </tbody>
+                </table>
+            </div>
+        </section>
         </main>
         <jsp:include page="../common/footer.jsp" />
     </div>
