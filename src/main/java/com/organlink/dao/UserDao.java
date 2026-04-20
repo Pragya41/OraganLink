@@ -32,6 +32,20 @@ public class UserDao {
         }
         return null;
     }
+    public User findByUsernameAndPhone(String username, String phone) {
+        String sql = "SELECT * FROM users WHERE username = ? AND phone = ?";
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, phone);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapRow(rs);
+        } catch (SQLException e) {
+            System.err.println("UserDao.findByUsernameAndPhone: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
     public User findById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection conn = DBConnection.getInstance().getConnection();

@@ -5,80 +5,122 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>OrganLink - Password Reset</title>
+    <title>OrganLink - Secure Password Reset</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css"/>
+    <style>
+        .token-box {
+            background: #f8fafc;
+            border: 2px dashed var(--primary);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .token-value {
+            font-family: monospace;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+        .token-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+    </style>
 </head>
 <body class="auth-body">
     <div class="auth-wrapper">
         <div class="auth-image">
             <div class="auth-image-content">
-                <h1>Security is <br> a Priority.</h1>
-                <p>We're here to help you regain access to your account securely. Follow the steps to reset your credentials.</p>
+                <h1 class="outfit">Security is <br> a Priority.</h1>
+                <p>We're here to help you regain access to your account securely. Follow the multi-factor verification steps to reset your credentials.</p>
             </div>
         </div>
 
         <div class="auth-form-side">
-            <div class="auth-card">
-                <div class="auth-logo">
-                    <span>&#10084;</span> OrganLink
+            <div class="auth-card" style="max-width: 500px;">
+                <div class="site-logo" style="margin-bottom: 32px;">
+                    <div class="icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    </div>
+                    <span>OrganLink</span>
                 </div>
 
                 <c:choose>
                     <c:when test="${param.step == 'newpass'}">
-                        <h2>Set New Password</h2>
-                        <p class="auth-welcome-text">Create a strong, new password for your account.</p>
+                        <h2 class="outfit">Verification Successful</h2>
+                        <p class="auth-welcome-text">Please copy the token below and use it to set your new password.</p>
+
+                        <div class="token-box">
+                            <span class="token-label">Your Reset Token</span>
+                            <div class="token-value"><c:out value="${param.token}"/></div>
+                            <small style="display: block; margin-top: 10px; color: var(--text-muted);">Copy this code for the next step</small>
+                        </div>
 
                         <c:if test="${param.error == 'mismatch'}">
-                            <div class="alert alert-danger">Passwords do not match.</div>
-                        </c:if>
-                        <c:if test="${param.msg == 'tokenGenerated'}">
-                            <div class="alert alert-info">Verification token accepted. Set your new password.</div>
+                            <div class="badge badge-danger" style="display: block; text-align: center; margin-bottom: 20px; padding: 10px;">Passwords or token do not match.</div>
                         </c:if>
 
                         <form method="post" action="${pageContext.request.contextPath}/auth">
                             <input type="hidden" name="action" value="reset"/>
-                            <input type="hidden" name="token" value="${param.token}"/>
                             
                             <div class="form-group">
-                                <label>New Password</label>
-                                <input type="password" name="newPassword" required placeholder="••••••••"/>
+                                <label>Paste Reset Token *</label>
+                                <input type="text" name="token" class="form-control" required placeholder="Paste the token from above" autocomplete="off"/>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>New Password *</label>
+                                    <input type="password" name="newPassword" class="form-control" required placeholder="••••••••"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Password *</label>
+                                    <input type="password" name="confirmPassword" class="form-control" required placeholder="••••••••"/>
+                                </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>Confirm New Password</label>
-                                <input type="password" name="confirmPassword" required placeholder="••••••••"/>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary btn-full">Reset My Password</button>
+                            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 12px;">Reset My Password</button>
                         </form>
                     </c:when>
 
                     <c:otherwise>
-                        <h2>Forgot Password?</h2>
-                        <p class="auth-welcome-text">Enter your username and we'll help your reset things.</p>
+                        <h2 class="outfit">Identity Verification</h2>
+                        <p class="auth-welcome-text">Enter your credentials to verify your ownership of the account.</p>
 
                         <c:if test="${param.error == 'notFound'}">
-                            <div class="alert alert-danger">System could not find that username.</div>
+                            <div class="badge badge-danger" style="display: block; text-align: center; margin-bottom: 20px; padding: 10px;">Account details not found. Please check your entries.</div>
                         </c:if>
                         <c:if test="${param.error == 'invalidToken'}">
-                            <div class="alert alert-danger">The reset token provided is invalid or has expired.</div>
+                            <div class="badge badge-danger" style="display: block; text-align: center; margin-bottom: 20px; padding: 10px;">The reset token provided is invalid or has expired.</div>
                         </c:if>
 
                         <form method="post" action="${pageContext.request.contextPath}/auth">
                             <input type="hidden" name="action" value="forgot"/>
                             
                             <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" name="username" required placeholder="Enter your registered username"/>
+                                <label>Username *</label>
+                                <input type="text" name="username" class="form-control" required placeholder="Enter your registered username"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Phone Number *</label>
+                                <input type="text" name="phone" class="form-control" maxlength="10" required placeholder="Registered 10-digit mobile"/>
                             </div>
                             
-                            <button type="submit" class="btn btn-primary btn-full">Generate Reset Token</button>
+                            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 12px;">Verify & Generate Token</button>
                         </form>
                     </c:otherwise>
                 </c:choose>
 
-                <div class="auth-links">
-                    <a href="${pageContext.request.contextPath}/auth?action=showLogin">Back to Sign In</a>
+                <div class="auth-links" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center;">
+                    <a href="${pageContext.request.contextPath}/auth?action=showLogin" style="font-weight: 600; color: var(--text-muted);">Back to Sign In</a>
                 </div>
             </div>
         </div>

@@ -189,7 +189,8 @@ public class AuthController extends HttpServlet {
             throws IOException {
 
         String username = req.getParameter("username");
-        User user = userDao.findByUsername(username);
+        String phone = req.getParameter("phone");
+        User user = userDao.findByUsernameAndPhone(username, phone);
 
         if (user == null) {
             resp.sendRedirect(req.getContextPath()
@@ -199,7 +200,7 @@ public class AuthController extends HttpServlet {
 
         String token = authService.generateResetToken(user.getId());
 
-        // In production, send email. For demo, show token in URL
+        // For this demo, we redirect to show the token in a "box" as requested
         resp.sendRedirect(req.getContextPath()
                 + "/auth?action=showReset&step=newpass&token=" + token
                 + "&msg=tokenGenerated");
