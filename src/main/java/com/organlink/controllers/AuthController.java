@@ -30,39 +30,42 @@ public class AuthController extends HttpServlet {
         switch (action) {
 
             case "showLogin":
-                req.getRequestDispatcher("/WEB-INF/views/auth/login.jsp")
-                        .forward(req, resp);
+                // If already logged in, redirect to dashboard
+                HttpSession session = req.getSession(false);
+                if (session != null && session.getAttribute("role") != null) {
+                    String role = (String) session.getAttribute("role");
+                    String redirect = "/member/home";
+                    if ("ADMIN".equals(role)) redirect = "/admin/home";
+                    else if ("HOSPITAL".equals(role)) redirect = "/hospital/home";
+                    resp.sendRedirect(req.getContextPath() + redirect);
+                    return;
+                }
+                req.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(req, resp);
                 break;
 
             case "showRegister":
-                req.getRequestDispatcher("/WEB-INF/views/auth/register.jsp")
-                        .forward(req, resp);
+                req.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(req, resp);
                 break;
 
             case "showReset":
-                req.getRequestDispatcher("/WEB-INF/views/auth/reset.jsp")
-                        .forward(req, resp);
+                req.getRequestDispatcher("/WEB-INF/views/auth/reset.jsp").forward(req, resp);
                 break;
 
             case "logout":
-                HttpSession session = req.getSession(false);
+                HttpSession s = req.getSession(false);
+                if (s != null) s.invalidate();
 
-                if (session != null)
-                    session.invalidate();
-
-                // Delete cookie
+                // Delete 'remember me' cookie
                 Cookie cookie = new Cookie("user_id", "");
                 cookie.setMaxAge(0);
                 cookie.setPath("/");
                 resp.addCookie(cookie);
 
-                resp.sendRedirect(req.getContextPath()
-                        + "/auth?action=showLogin&msg=loggedOut");
+                resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&msg=loggedOut");
                 break;
 
             default:
-                req.getRequestDispatcher("/WEB-INF/views/auth/login.jsp")
-                        .forward(req, resp);
+                resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin");
         }
     }
 
@@ -71,30 +74,23 @@ public class AuthController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = req.getParameter("action");
-        if (action == null)
-            action = "";
+        if (action == null) action = "";
 
         switch (action) {
-
             case "login":
                 handleLogin(req, resp);
                 break;
-
             case "register":
                 handleRegister(req, resp);
                 break;
-
             case "forgot":
                 handleForgot(req, resp);
                 break;
-
             case "reset":
                 handleReset(req, resp);
                 break;
-
             default:
-                resp.sendRedirect(req.getContextPath()
-                        + "/auth?action=showLogin");
+                resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin");
         }
     }
 
@@ -108,8 +104,7 @@ public class AuthController extends HttpServlet {
         User user = authService.login(username, password);
 
         if (user == null) {
-            resp.sendRedirect(req.getContextPath()
-                    + "/auth?action=showLogin&error=invalid");
+            resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&error=invalid");
             return;
         }
 
@@ -119,16 +114,12 @@ public class AuthController extends HttpServlet {
         session.setAttribute("fullName", user.getFullName());
         session.setAttribute("username", user.getUsername());
 
-        // If member, load blood type
         if ("MEMBER".equals(user.getRole())) {
             com.organlink.dao.MemberDao memberDao = new com.organlink.dao.MemberDao();
             com.organlink.model.Member m = memberDao.findByUserId(user.getId());
-
-            if (m != null)
-                session.setAttribute("bloodType", m.getBloodType());
+            if (m != null) session.setAttribute("bloodType", m.getBloodType());
         }
 
-        // Remember me cookie (24h)
         if ("on".equals(remember)) {
             Cookie cookie = new Cookie("user_id", String.valueOf(user.getId()));
             cookie.setMaxAge(86400);
@@ -136,28 +127,14 @@ public class AuthController extends HttpServlet {
             resp.addCookie(cookie);
         }
 
-        String redirect;
-
-        switch (user.getRole()) {
-            case "ADMIN":
-                redirect = "/admin/home";
-                break;
-
-            case "HOSPITAL":
-                redirect = "/hospital/home";
-                break;
-
-            default:
-                redirect = "/member/home";
-                break;
-        }
+        String redirect = "/member/home";
+        if ("ADMIN".equals(user.getRole())) redirect = "/admin/home";
+        else if ("HOSPITAL".equals(user.getRole())) redirect = "/hospital/home";
 
         resp.sendRedirect(req.getContextPath() + redirect);
     }
 
-    private void handleRegister(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-
+    private void handleRegister(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String fullName = req.getParameter("fullName");
         String username = req.getParameter("username");
         String password = req.getParameter("password");
@@ -165,70 +142,50 @@ public class AuthController extends HttpServlet {
         String phone = req.getParameter("phone");
         String role = req.getParameter("role");
         String bloodType = req.getParameter("bloodType");
-
         String address = req.getParameter("address");
         String hospName = req.getParameter("hospitalName");
         String licenseNo = req.getParameter("licenseNo");
 
-        String error = userService.register(
-                username, password, fullName, email, phone,
-                role, bloodType,
-                address, hospName, licenseNo);
+        String error = userService.register(username, password, fullName, email, phone, role, bloodType, address, hospName, licenseNo);
 
         if (error != null) {
-            resp.sendRedirect(req.getContextPath()
-                    + "/auth?action=showRegister&error=" + error);
+            resp.sendRedirect(req.getContextPath() + "/auth?action=showRegister&error=" + error);
             return;
         }
 
-        resp.sendRedirect(req.getContextPath()
-                + "/auth?action=showLogin&msg=registered");
+        resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&msg=registered");
     }
 
-    private void handleForgot(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-
+    private void handleForgot(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String username = req.getParameter("username");
         String phone = req.getParameter("phone");
         User user = userDao.findByUsernameAndPhone(username, phone);
 
         if (user == null) {
-            resp.sendRedirect(req.getContextPath()
-                    + "/auth?action=showReset&error=notFound");
+            resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&error=notFound");
             return;
         }
 
         String token = authService.generateResetToken(user.getId());
-
-        // For this demo, we redirect to show the token in a "box" as requested
-        resp.sendRedirect(req.getContextPath()
-                + "/auth?action=showReset&step=newpass&token=" + token
-                + "&msg=tokenGenerated");
+        resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&step=newpass&token=" + token + "&msg=tokenGenerated");
     }
 
-    private void handleReset(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-
+    private void handleReset(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String token = req.getParameter("token");
         String newPass = req.getParameter("newPassword");
         String confirm = req.getParameter("confirmPassword");
 
         if (newPass == null || !newPass.equals(confirm)) {
-            resp.sendRedirect(req.getContextPath()
-                    + "/auth?action=showReset&step=newpass&token=" + token
-                    + "&error=mismatch");
+            resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&step=newpass&token=" + token + "&error=mismatch");
             return;
         }
 
         boolean ok = authService.resetPassword(token, newPass);
-
         if (!ok) {
-            resp.sendRedirect(req.getContextPath()
-                    + "/auth?action=showReset&error=invalidToken");
+            resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&error=invalidToken");
             return;
         }
 
-        resp.sendRedirect(req.getContextPath()
-                + "/auth?action=showLogin&msg=passwordReset");
+        resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&msg=passwordReset");
     }
 }
