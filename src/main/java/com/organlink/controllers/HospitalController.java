@@ -34,7 +34,8 @@ public class HospitalController extends HttpServlet {
         try {
             switch (path) {
 
-                case "/home":
+                case "/":
+                case "/home": {
                     Map<String, Integer> stats = dash.getHospitalStats(userId);
                     req.setAttribute("stats", stats);
                     req.setAttribute("recentAnnouncements", annDao.findRecent(5));
@@ -61,6 +62,7 @@ public class HospitalController extends HttpServlet {
 
                     forward(req, resp, "home");
                     break;
+                }
 
                 case "/announcements":
                     req.setAttribute("announcements", annDao.findAll());

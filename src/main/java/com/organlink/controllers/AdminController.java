@@ -32,6 +32,7 @@ public class AdminController extends HttpServlet {
         try {
             switch (path) {
 
+                case "/":
                 case "/home":
                     Map<String, Integer> stats = dash.getAdminStats();
                     req.setAttribute("stats", stats);
@@ -156,6 +157,66 @@ public class AdminController extends HttpServlet {
                     break;
                 }
 
+                case "update": {
+                    int id = Integer.parseInt(req.getParameter("id"));
+                    String path = req.getPathInfo();
+                    
+                    if (path != null && path.contains("hospitals")) {
+                        // Update Hospital & User
+                        User u = userDao.findById(id);
+                        if (u != null) {
+                            u.setEmail(req.getParameter("email"));
+                            u.setPhone(req.getParameter("phone"));
+                            userDao.updateUser(u);
+                        }
+
+                        Hospital h = new Hospital();
+                        h.setUserId(id);
+                        h.setHospitalName(req.getParameter("hospital_name"));
+                        h.setLicenseNo(req.getParameter("license"));
+                        h.setAddress(req.getParameter("address"));
+                        hospDao.updateHospital(h);
+                        
+                        resp.sendRedirect(req.getContextPath() + "/admin/hospitals?msg=updated");
+                    } 
+                    else if (path != null && path.contains("members")) {
+                        User u = userDao.findById(id);
+                        if (u != null) {
+                            u.setFullName(req.getParameter("full_name"));
+                            u.setEmail(req.getParameter("email"));
+                            u.setPhone(req.getParameter("phone"));
+                            userDao.updateUser(u);
+                        }
+                        
+                        resp.sendRedirect(req.getContextPath() + "/admin/members?msg=updated");
+                    }
+                    else if (path != null && path.contains("announcements")) {
+                        Announcement a = new Announcement();
+                        a.setId(id);
+                        a.setTitle(req.getParameter("title"));
+                        a.setDescription(req.getParameter("description"));
+                        annDao.updateAnnouncement(a);
+                        resp.sendRedirect(req.getContextPath() + "/admin/announcements?msg=updated");
+                    }
+                    else if (path != null && path.contains("requests")) {
+                        // For requests, we primarily update status from the admin side
+                        DonationRequest dr = reqDao.findById(id);
+                        if (dr != null) {
+                            String newStatus = req.getParameter("status");
+                            if (newStatus != null) {
+                                if ("APPROVED".equals(newStatus)) reqDao.approveRequest(id, dr.getHospitalId());
+                                else if ("COMPLETED".equals(newStatus)) reqDao.completeRequest(id);
+                                else if ("REJECTED".equals(newStatus)) reqDao.rejectRequest(id);
+                            }
+                        }
+                        resp.sendRedirect(req.getContextPath() + "/admin/requests?msg=updated");
+                    }
+                    else {
+                        resp.sendRedirect(req.getContextPath() + "/admin/home");
+                    }
+                    break;
+                }
+
                 case "updateAnnouncement": {
                     Announcement a = new Announcement();
                     a.setId(Integer.parseInt(req.getParameter("id")));
@@ -228,6 +289,18 @@ public class AdminController extends HttpServlet {
                     if ("HOSPITAL".equals(role)) redirect = "/admin/hospitals";
                     else if ("MEMBER".equals(role)) redirect = "/admin/members";
                     resp.sendRedirect(req.getContextPath() + redirect + "?msg=unlocked");
+                    break;
+                }
+
+                case "deleteOrgan": {
+                    organDao.deleteOrgan(Integer.parseInt(req.getParameter("id")));
+                    resp.sendRedirect(req.getContextPath() + "/admin/organs?msg=deleted");
+                    break;
+                }
+
+                case "deleteRequest": {
+                    reqDao.deleteRequest(Integer.parseInt(req.getParameter("id")));
+                    resp.sendRedirect(req.getContextPath() + "/admin/requests?msg=deleted");
                     break;
                 }
 

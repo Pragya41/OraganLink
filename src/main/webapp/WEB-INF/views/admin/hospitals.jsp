@@ -17,8 +17,10 @@
                         <h1>Manage Hospitals</h1>
                     </div>
                     <c:if test="${param.msg == 'deleted'}">
-                        <div class="alert alert-success">Hospital
-                            deleted.</div>
+                        <div class="alert alert-success">Hospital deleted successfully.</div>
+                    </c:if>
+                    <c:if test="${param.msg == 'updated'}">
+                        <div class="alert alert-success">Hospital record updated successfully.</div>
                     </c:if>
 
                     <div class="card">

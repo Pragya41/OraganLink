@@ -162,9 +162,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.name = 'id';
             }
 
+            // Fields that cannot be edited or updated
+            const uneditableFields = ['username', 'license', 'registered', 'requested', 'date'];
+            if (uneditableFields.includes(header.toLowerCase())) {
+                input.readOnly = true;
+                input.classList.add('read-only-field'); // Optional: add a class for styling
+            }
+
             // Custom mapping for specific tables if needed
-            if (tableId === 'memberTable' && header === 'Full Name') input.name = 'fullName';
-            if (tableId === 'memberTable' && header === 'Username') input.name = 'username';
+            // Default: header "Full Name" -> input name "full_name"
             
             group.appendChild(input);
             dynamicFields.appendChild(group);
@@ -185,8 +191,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         if (tableId === 'memberTable') actionInput.value = 'deleteMember';
                         else if (tableId === 'hospitalTable') actionInput.value = 'deleteHospital';
-                        else if (tableId === 'annTable' || tableId === 'noticeTable' || tableId === 'myAnnTable') actionInput.value = 'deleteNotice';
+                        else if (tableId === 'annTable' || tableId === 'noticeTable' || tableId === 'myAnnTable') actionInput.value = 'deleteAnnouncement';
                         else if (tableId === 'organTable') actionInput.value = 'deleteOrgan';
+                        else if (tableId === 'requestTable') actionInput.value = 'deleteRequest';
                         else actionInput.value = 'delete';
 
                         const idInput = document.createElement('input');
@@ -204,10 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (saveBtn) {
                 saveBtn.onclick = function() {
-                    let action = 'update';
-                    if (tableId === 'annTable' || tableId === 'noticeTable' || tableId === 'myAnnTable') action = 'updateNotice';
-                    
-                    panelActionInput.value = action;
+                    panelActionInput.value = 'update';
                     panelForm.submit();
                 };
             }

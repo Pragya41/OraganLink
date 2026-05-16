@@ -29,6 +29,14 @@
     padding: 0;
 }
 
+/* Form Styles */
+.form-control[readonly], .read-only-field {
+    background-color: #f9fafb !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+    border-color: var(--border);
+}
+
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: var(--bg);

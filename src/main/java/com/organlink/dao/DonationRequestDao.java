@@ -279,4 +279,16 @@ public class DonationRequestDao {
 
         return null;
     }
+
+    public boolean deleteRequest(int id) {
+        String sql = "DELETE FROM donation_requests WHERE id = ?";
+        try (java.sql.Connection conn = com.organlink.config.DBConnection.getInstance().getConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (java.sql.SQLException e) {
+            System.err.println("DonationRequestDao.deleteRequest: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 }

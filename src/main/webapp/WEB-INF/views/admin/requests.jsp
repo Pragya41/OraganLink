@@ -17,6 +17,12 @@
                         <div class="page-header">
                             <h1>All Donation Requests</h1>
                         </div>
+                        <c:if test="${param.msg == 'deleted'}">
+                            <div class="alert alert-success">Request removed successfully.</div>
+                        </c:if>
+                        <c:if test="${param.msg == 'updated'}">
+                            <div class="alert alert-success">Request status updated successfully.</div>
+                        </c:if>
                         <div class="card">
                             <table class="data-table" id="requestTable">
                                 <thead>

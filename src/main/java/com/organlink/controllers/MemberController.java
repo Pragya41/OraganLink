@@ -38,6 +38,7 @@ public class MemberController extends HttpServlet {
         try {
             switch (path) {
 
+                case "/":
                 case "/home": {
                     String bt = (String) req.getSession().getAttribute("bloodType");
                     Map<String, Integer> stats = dash.getMemberStats(userId, bt);

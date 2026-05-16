@@ -17,8 +17,10 @@
                         <h1>Manage Members</h1>
                     </div>
                     <c:if test="${param.msg == 'deleted'}">
-                        <div class="alert alert-success">Member
-                            deleted.</div>
+                        <div class="alert alert-success">Member deleted successfully.</div>
+                    </c:if>
+                    <c:if test="${param.msg == 'updated'}">
+                        <div class="alert alert-success">Member record updated successfully.</div>
                     </c:if>
 
                     <div class="card">
@@ -28,6 +30,7 @@
                                     <th>ID</th>
                                     <th>Full Name</th>
                                     <th>Username</th>
+                                    <th>Email</th>
                                     <th>Blood Type</th>
                                     <th>Phone</th>
                                     <th>Address</th>
@@ -45,6 +48,9 @@
                                         <td>
                                             <c:out value="${m.username}" />
                                         </td>
+                                        <td>
+                                            <c:out value="${m.email}" />
+                                        </td>
                                         <td><span class="blood-badge">
                                                 <c:out value="${m.bloodType}" />
                                             </span></td>
@@ -58,7 +64,7 @@
                                 </c:forEach>
                                 <c:if test="${empty members}">
                                     <tr>
-                                        <td colspan="6" class="text-center">No members registered.</td>
+                                        <td colspan="7" class="text-center">No members registered.</td>
                                     </tr>
                                 </c:if>
                             </tbody>
