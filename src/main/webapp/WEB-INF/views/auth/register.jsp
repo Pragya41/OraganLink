@@ -44,8 +44,7 @@
                     </div>
                 </c:if>
 
-                <form method="post" action="${pageContext.request.contextPath}/auth" id="regForm">
-                    <input type="hidden" name="action" value="register"/>
+                <form method="post" action="${pageContext.request.contextPath}/register" id="regForm">
                     
                     <%-- Step 1: Role Selection --%>
                     <div class="form-group" id="roleStep">
@@ -123,7 +122,7 @@
                 </form>
 
                 <div class="auth-links">
-                    <span>Already a member? <a href="${pageContext.request.contextPath}/auth?action=showLogin">Sign In</a></span>
+                    <span>Already a member? <a href="${pageContext.request.contextPath}/login">Sign In</a></span>
                 </div>
             </div>
         </div>

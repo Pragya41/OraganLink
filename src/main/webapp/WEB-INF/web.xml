@@ -37,7 +37,7 @@
          Redirects to Auth Controller
     ========================== -->
     <welcome-file-list>
-        <welcome-file>auth</welcome-file>
+        <welcome-file>login</welcome-file>
     </welcome-file-list>
 
     <!-- =========================

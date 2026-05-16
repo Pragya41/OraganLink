@@ -40,8 +40,7 @@
                     <div class="alert alert-success">Password reset successfully!</div>
                 </c:if>
 
-                <form method="post" action="${pageContext.request.contextPath}/auth">
-                    <input type="hidden" name="action" value="login"/>
+                <form method="post" action="${pageContext.request.contextPath}/login">
                     
                     <div class="form-group">
                         <label for="username">Username</label>
@@ -62,8 +61,8 @@
                 </form>
 
                 <div class="auth-links">
-                    <a href="${pageContext.request.contextPath}/auth?action=showRegister">Create Account</a>
-                    <a href="${pageContext.request.contextPath}/auth?action=showReset">Forgot Password?</a>
+                    <a href="${pageContext.request.contextPath}/register">Create Account</a>
+                    <a href="${pageContext.request.contextPath}/reset">Forgot Password?</a>
                 </div>
             </div>
         </div>

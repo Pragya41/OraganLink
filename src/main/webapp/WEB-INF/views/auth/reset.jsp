@@ -68,8 +68,7 @@
                             <div class="badge badge-danger" style="display: block; text-align: center; margin-bottom: 20px; padding: 10px;">Passwords or token do not match.</div>
                         </c:if>
 
-                        <form method="post" action="${pageContext.request.contextPath}/auth">
-                            <input type="hidden" name="action" value="reset"/>
+                        <form method="post" action="${pageContext.request.contextPath}/reset">
                             
                             <div class="form-group">
                                 <label>Paste Reset Token *</label>
@@ -102,8 +101,7 @@
                             <div class="badge badge-danger" style="display: block; text-align: center; margin-bottom: 20px; padding: 10px;">The reset token provided is invalid or has expired.</div>
                         </c:if>
 
-                        <form method="post" action="${pageContext.request.contextPath}/auth">
-                            <input type="hidden" name="action" value="forgot"/>
+                        <form method="post" action="${pageContext.request.contextPath}/reset">
                             
                             <div class="form-group">
                                 <label>Username *</label>
@@ -121,7 +119,7 @@
                 </c:choose>
 
                 <div class="auth-links" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center;">
-                    <a href="${pageContext.request.contextPath}/auth?action=showLogin" style="font-weight: 600; color: var(--text-muted);">Back to Sign In</a>
+                    <a href="${pageContext.request.contextPath}/login" style="font-weight: 600; color: var(--text-muted);">Back to Sign In</a>
                 </div>
             </div>
         </div>

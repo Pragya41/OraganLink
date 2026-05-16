@@ -26,7 +26,7 @@ public class AuthFilter implements Filter {
         String path = req.getServletPath();
 
         if (role == null) {
-            resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 

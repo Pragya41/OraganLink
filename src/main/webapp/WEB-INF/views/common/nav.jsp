@@ -85,7 +85,7 @@
                             </c:choose>
                         </nav>
 
-                        <a href="${pageContext.request.contextPath}/auth?action=logout" class="nav-logout">
+                        <a href="${pageContext.request.contextPath}/logout" class="nav-logout">
                             Logout <i class="fa fa-sign-out"></i>
                         </a>
                     </div>

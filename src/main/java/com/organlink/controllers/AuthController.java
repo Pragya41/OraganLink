@@ -12,7 +12,7 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/auth")
+@WebServlet({"/login", "/register", "/reset", "/logout", "/auth"})
 public class AuthController extends HttpServlet {
 
     private final AuthService authService = new AuthService();
@@ -23,13 +23,16 @@ public class AuthController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String action = req.getParameter("action");
-        if (action == null)
-            action = "showLogin";
+        String path = req.getServletPath();
+        
+        // Handle root or /auth by redirecting to login
+        if ("/auth".equals(path) || "/".equals(path) || "".equals(path)) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
 
-        switch (action) {
-
-            case "showLogin":
+        switch (path) {
+            case "/login":
                 // If already logged in, redirect to dashboard
                 HttpSession session = req.getSession(false);
                 if (session != null && session.getAttribute("role") != null) {
@@ -43,15 +46,15 @@ public class AuthController extends HttpServlet {
                 req.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(req, resp);
                 break;
 
-            case "showRegister":
+            case "/register":
                 req.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(req, resp);
                 break;
 
-            case "showReset":
+            case "/reset":
                 req.getRequestDispatcher("/WEB-INF/views/auth/reset.jsp").forward(req, resp);
                 break;
 
-            case "logout":
+            case "/logout":
                 HttpSession s = req.getSession(false);
                 if (s != null) s.invalidate();
 
@@ -61,11 +64,11 @@ public class AuthController extends HttpServlet {
                 cookie.setPath("/");
                 resp.addCookie(cookie);
 
-                resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&msg=loggedOut");
+                resp.sendRedirect(req.getContextPath() + "/login?msg=loggedOut");
                 break;
 
             default:
-                resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin");
+                resp.sendRedirect(req.getContextPath() + "/login");
         }
     }
 
@@ -73,24 +76,25 @@ public class AuthController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String action = req.getParameter("action");
-        if (action == null) action = "";
+        String path = req.getServletPath();
 
-        switch (action) {
-            case "login":
+        switch (path) {
+            case "/login":
                 handleLogin(req, resp);
                 break;
-            case "register":
+            case "/register":
                 handleRegister(req, resp);
                 break;
-            case "forgot":
-                handleForgot(req, resp);
-                break;
-            case "reset":
-                handleReset(req, resp);
+            case "/reset":
+                // Determine if it's the first step (forgot) or second step (reset)
+                if (req.getParameter("token") != null) {
+                    handleReset(req, resp);
+                } else {
+                    handleForgot(req, resp);
+                }
                 break;
             default:
-                resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin");
+                resp.sendRedirect(req.getContextPath() + "/login");
         }
     }
 
@@ -104,7 +108,7 @@ public class AuthController extends HttpServlet {
         User user = authService.login(username, password);
 
         if (user == null) {
-            resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&error=invalid");
+            resp.sendRedirect(req.getContextPath() + "/login?error=invalid");
             return;
         }
 
@@ -149,11 +153,11 @@ public class AuthController extends HttpServlet {
         String error = userService.register(username, password, fullName, email, phone, role, bloodType, address, hospName, licenseNo);
 
         if (error != null) {
-            resp.sendRedirect(req.getContextPath() + "/auth?action=showRegister&error=" + error);
+            resp.sendRedirect(req.getContextPath() + "/register?error=" + error);
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&msg=registered");
+        resp.sendRedirect(req.getContextPath() + "/login?msg=registered");
     }
 
     private void handleForgot(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -162,12 +166,12 @@ public class AuthController extends HttpServlet {
         User user = userDao.findByUsernameAndPhone(username, phone);
 
         if (user == null) {
-            resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&error=notFound");
+            resp.sendRedirect(req.getContextPath() + "/reset?error=notFound");
             return;
         }
 
         String token = authService.generateResetToken(user.getId());
-        resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&step=newpass&token=" + token + "&msg=tokenGenerated");
+        resp.sendRedirect(req.getContextPath() + "/reset?step=newpass&token=" + token + "&msg=tokenGenerated");
     }
 
     private void handleReset(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -176,16 +180,16 @@ public class AuthController extends HttpServlet {
         String confirm = req.getParameter("confirmPassword");
 
         if (newPass == null || !newPass.equals(confirm)) {
-            resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&step=newpass&token=" + token + "&error=mismatch");
+            resp.sendRedirect(req.getContextPath() + "/reset?step=newpass&token=" + token + "&error=mismatch");
             return;
         }
 
         boolean ok = authService.resetPassword(token, newPass);
         if (!ok) {
-            resp.sendRedirect(req.getContextPath() + "/auth?action=showReset&error=invalidToken");
+            resp.sendRedirect(req.getContextPath() + "/reset?error=invalidToken");
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/auth?action=showLogin&msg=passwordReset");
+        resp.sendRedirect(req.getContextPath() + "/login?msg=passwordReset");
     }
 }
