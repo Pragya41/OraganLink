@@ -5,8 +5,9 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>OrganLink - Register</title>
+    <title>OrganLink Nepal - Register</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
         .hidden-fields { display: none; }
         .visible-fields { display: block; animation: fadeIn 0.4s ease; }
@@ -17,15 +18,15 @@
     <div class="auth-wrapper">
         <div class="auth-image">
             <div class="auth-image-content">
-                <h1>Be the Reason <br> for Someone's Smile.</h1>
-                <p>Registration is the first step towards a legacy of life. Choose your role and join our mission today.</p>
+                <h1>Be the Reason <br> for a Smile in Nepal.</h1>
+                <p>Registration is the first step towards a legacy of life in our community. Choose your role and join our mission today.</p>
             </div>
         </div>
 
         <div class="auth-form-side">
             <div class="auth-card" style="max-width: 500px;">
                 <div class="auth-logo">
-                    <span>&#10084;</span> OrganLink
+                    <i class="fa fa-heartbeat"></i> OrganLink Nepal
                 </div>
 
                 <h2>Create Your Account</h2>

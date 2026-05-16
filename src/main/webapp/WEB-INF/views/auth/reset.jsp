@@ -5,8 +5,9 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>OrganLink - Secure Password Reset</title>
+    <title>OrganLink Nepal - Secure Password Reset</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
         .token-box {
             background: #f8fafc;
@@ -46,10 +47,10 @@
         <div class="auth-form-side">
             <div class="auth-card" style="max-width: 500px;">
                 <div class="site-logo" style="margin-bottom: 32px;">
-                    <div class="icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <div class="icon" style="color: var(--primary);">
+                        <i class="fa fa-heartbeat fa-2x"></i>
                     </div>
-                    <span>OrganLink</span>
+                    <span>OrganLink Nepal</span>
                 </div>
 
                 <c:choose>

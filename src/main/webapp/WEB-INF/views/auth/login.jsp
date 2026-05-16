@@ -5,22 +5,23 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>OrganLink - Login</title>
+    <title>OrganLink Nepal - Login</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 </head>
 <body class="auth-body">
     <div class="auth-wrapper">
         <div class="auth-image">
             <div class="auth-image-content">
-                <h1>Connecting Hope, <br> Saving Lives.</h1>
-                <p>Join our community of donors and medical professionals dedicated to making a difference through organ donation.</p>
+                <h1>Connecting Hope <br> in Nepal.</h1>
+                <p>Join our community of donors and medical professionals across the country dedicated to saving lives through organ donation.</p>
             </div>
         </div>
         
         <div class="auth-form-side">
             <div class="auth-card">
                 <div class="auth-logo">
-                    <span>&#10084;</span> OrganLink
+                    <i class="fa fa-heartbeat"></i> OrganLink Nepal
                 </div>
                 
                 <h2>Welcome Back</h2>

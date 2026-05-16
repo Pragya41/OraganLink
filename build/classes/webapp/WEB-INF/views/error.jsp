@@ -53,14 +53,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             background: #1a252f;
         }
-        .debug-info {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #888;
-            text-align: left;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
     </style>
 </head>
 <body>
@@ -86,12 +78,6 @@
             </p>
             <a href="${pageContext.request.contextPath}/" class="btn-home">Return to Safety</a>
             
-            <div class="debug-info">
-                <strong>Reference:</strong> ${requestScope['jakarta.servlet.error.request_uri']}<br>
-                <c:if test="${not empty requestScope['jakarta.servlet.error.message']}">
-                    <strong>Note:</strong> ${requestScope['jakarta.servlet.error.message']}
-                </c:if>
-            </div>
         </div>
     </div>
 </body>

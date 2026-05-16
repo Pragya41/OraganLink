@@ -6,7 +6,7 @@
                 <div class="site-header">
                     <div class="site-header-inner">
                         <div class="site-logo">
-                            <span>&#10084;</span> OrganLink
+                            <span><i class="fa fa-heartbeat"></i></span> OrganLink Nepal
                         </div>
                         <div class="site-tagline">
                             Linking Donors, Saving Lives
@@ -86,7 +86,7 @@
                         </nav>
 
                         <a href="${pageContext.request.contextPath}/auth?action=logout" class="nav-logout">
-                            Logout &#128682;
+                            Logout <i class="fa fa-sign-out"></i>
                         </a>
                     </div>
                 </div>
