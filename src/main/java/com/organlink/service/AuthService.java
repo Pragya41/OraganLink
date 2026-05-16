@@ -17,7 +17,10 @@ public class AuthService {
         User user = userDao.findByUsername(username);
 
         if (user == null) return null;
-        if (isAccountLocked(user.getId())) return null;
+        
+        if (user.isLocked() || isAccountLocked(user.getId())) {
+            throw new RuntimeException("LOCKED");
+        }
 
         if (!PasswordUtil.verifyPassword(password, user.getPassword())) {
             recordFailedAttempt(user.getId());

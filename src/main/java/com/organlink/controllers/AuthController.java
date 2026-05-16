@@ -105,7 +105,15 @@ public class AuthController extends HttpServlet {
         String password = req.getParameter("password");
         String remember = req.getParameter("remember");
 
-        User user = authService.login(username, password);
+        User user = null;
+        try {
+            user = authService.login(username, password);
+        } catch (RuntimeException e) {
+            if ("LOCKED".equals(e.getMessage())) {
+                resp.sendRedirect(req.getContextPath() + "/login?error=locked");
+                return;
+            }
+        }
 
         if (user == null) {
             resp.sendRedirect(req.getContextPath() + "/login?error=invalid");

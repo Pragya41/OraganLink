@@ -28,7 +28,10 @@
                 <p class="auth-welcome-text">Please enter your details to access your account.</p>
 
                 <c:if test="${param.error == 'invalid'}">
-                    <div class="alert alert-danger">Invalid username or password, or account is locked.</div>
+                    <div class="alert alert-danger">Invalid username or password.</div>
+                </c:if>
+                <c:if test="${param.error == 'locked'}">
+                    <div class="alert alert-danger">Your account has been locked by an administrator. Please contact support.</div>
                 </c:if>
                 <c:if test="${param.msg == 'registered'}">
                     <div class="alert alert-success">Registration successful! Please log in.</div>

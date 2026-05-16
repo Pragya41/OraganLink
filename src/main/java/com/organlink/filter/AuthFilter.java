@@ -9,6 +9,8 @@ import java.io.IOException;
 @WebFilter(urlPatterns = {"/admin/*", "/hospital/*", "/member/*"})
 public class AuthFilter implements Filter {
 
+    private final com.organlink.dao.UserDao userDao = new com.organlink.dao.UserDao();
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -28,6 +30,21 @@ public class AuthFilter implements Filter {
         if (role == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
+        }
+
+        // Check if user was locked by admin while logged in
+        int userId = (int) session.getAttribute("userId");
+        com.organlink.model.User user = userDao.findById(userId);
+        
+        if (user != null) {
+            if (user.isLocked()) {
+                session.invalidate();
+                resp.sendRedirect(req.getContextPath() + "/login?error=locked");
+                return;
+            }
+            // Refresh session info in case admin changed it (e.g. name update)
+            session.setAttribute("fullName", user.getFullName());
+            session.setAttribute("role", user.getRole());
         }
 
         boolean goingAdmin = path.startsWith("/admin");

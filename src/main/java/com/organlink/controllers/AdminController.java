@@ -165,6 +165,7 @@ public class AdminController extends HttpServlet {
                         // Update Hospital & User
                         User u = userDao.findById(id);
                         if (u != null) {
+                            u.setFullName(req.getParameter("hospital_name")); // Sync name
                             u.setEmail(req.getParameter("email"));
                             u.setPhone(req.getParameter("phone"));
                             userDao.updateUser(u);
