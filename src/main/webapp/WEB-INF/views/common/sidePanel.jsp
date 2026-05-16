@@ -101,8 +101,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const currentTitle = currentUserName.trim().toLowerCase();
                     isOwner = (authorName === currentTitle);
                 }
-            } else if (tableId === 'myAnnTable') {
+            } else if (tableId === 'myAnnTable' || tableId === 'organTable') {
                 isOwner = true; // Assume owner if in "My" table
+            } else if (tableId === 'allOrgansTable') {
+                isOwner = false; // Cannot edit others' organs
             }
         }
 

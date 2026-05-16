@@ -142,9 +142,9 @@ public class HospitalController extends HttpServlet {
                 }
 
                 case "deleteOrgan": {
-                    int organId = Integer.parseInt(req.getParameter("organId"));
+                    int id = Integer.parseInt(req.getParameter("id"));
 
-                    organSvc.deleteOrgan(organId, userId);
+                    organSvc.deleteOrgan(id, userId);
 
                     resp.sendRedirect(req.getContextPath()
                             + "/hospital/organs?msg=deleted");

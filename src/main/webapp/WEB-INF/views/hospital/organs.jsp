@@ -14,8 +14,14 @@
     <main class="main-content">
         <section class="mb-4">
             <h2 class="section-title">My Registered Organs</h2>
+            <c:if test="${param.msg == 'deleted'}">
+                <div class="alert alert-success">Organ record removed from your inventory.</div>
+            </c:if>
+            <c:if test="${param.msg == 'updated'}">
+                <div class="alert alert-success">Organ details updated successfully.</div>
+            </c:if>
             <div class="card">
-                <table class="data-table">
+                <table class="data-table" id="organTable">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -52,7 +58,7 @@
         <section>
             <h2 class="section-title">All Platform Organs</h2>
             <div class="card">
-                <table class="data-table">
+                <table class="data-table" id="allOrgansTable">
                     <thead>
                         <tr>
                             <th>ID</th>
