@@ -117,6 +117,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     lockBtn.style.display = 'none';
                     unlockBtn.style.display = 'none';
                 }
+
+                if (tableId === 'queryTable') {
+                    if (saveBtn) saveBtn.style.display = 'none';
+                } else {
+                    if (saveBtn) saveBtn.style.display = 'block';
+                }
             } else {
                 adminActions.style.setProperty('display', 'none', 'important');
                 if (closeBtnFooter) closeBtnFooter.innerText = 'Close';
@@ -159,8 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.name = 'id';
             }
 
-            const uneditableFields = ['username', 'license', 'registered', 'requested', 'date'];
-            if (uneditableFields.includes(header.toLowerCase())) {
+            const uneditableFields = ['username', 'license', 'registered', 'requested', 'date', 'submitted on'];
+            if (uneditableFields.includes(header.toLowerCase()) || tableId === 'queryTable') {
                 input.readOnly = true;
                 input.classList.add('read-only-field');
             }
@@ -187,6 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         else if (tableId === 'organTable') actionInput.value = 'deleteOrgan';
                         else if (tableId === 'requestTable') actionInput.value = 'deleteRequest';
                         else if (tableId === 'myReqTable') actionInput.value = 'deleteRequest';
+                        else if (tableId === 'queryTable') actionInput.value = 'deleteQuery';
                         else actionInput.value = 'delete';
 
                         const idInput = document.createElement('input');

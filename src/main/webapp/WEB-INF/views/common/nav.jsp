@@ -46,6 +46,8 @@
                                         class="${fn:contains(pageContext.request.servletPath, 'announcements') ? 'active' : ''}">Announcements</a>
                                     <a href="${pageContext.request.contextPath}/admin/completedTransplants"
                                         class="${fn:contains(pageContext.request.servletPath, 'completedTransplants') ? 'active' : ''}">Completed</a>
+                                    <a href="${pageContext.request.contextPath}/admin/queries"
+                                        class="${fn:contains(pageContext.request.servletPath, 'queries') ? 'active' : ''}">Queries</a>
                                 </c:when>
 
                                 <c:when test="${sessionScope.role == 'HOSPITAL'}">

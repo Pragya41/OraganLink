@@ -23,6 +23,7 @@ public class AdminController extends HttpServlet {
     private final AnnouncementDao annDao = new AnnouncementDao();
     private final DashboardService dash = new DashboardService();
     private final AuthService authService = new AuthService();
+    private final ContactDao contactDao = new ContactDao();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -106,6 +107,11 @@ public class AdminController extends HttpServlet {
                     req.setAttribute("announcements", annDao.findAll());
                     req.setAttribute("myAnnouncements", annDao.findByAuthor(userId));
                     forward(req, resp, "announcements");
+                    break;
+
+                case "/queries":
+                    req.setAttribute("queries", contactDao.findAll());
+                    forward(req, resp, "queries");
                     break;
 
                 case "/addAnnouncement":
@@ -299,6 +305,12 @@ public class AdminController extends HttpServlet {
                 case "deleteOrgan": {
                     organDao.deleteOrgan(Integer.parseInt(req.getParameter("id")));
                     resp.sendRedirect(req.getContextPath() + "/admin/organs?msg=deleted");
+                    break;
+                }
+
+                case "deleteQuery": {
+                    contactDao.deleteQuery(Integer.parseInt(req.getParameter("id")));
+                    resp.sendRedirect(req.getContextPath() + "/admin/queries?msg=deleted");
                     break;
                 }
 
