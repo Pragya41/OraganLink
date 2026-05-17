@@ -151,7 +151,7 @@
 
                         <div class="auth-links">
                             <span>Already a member? <a
-                                    href="${pageContext.request.contextPath}/auth?action=showLogin">Sign In</a></span>
+                                    href="${pageContext.request.contextPath}/login">Sign In</a></span>
                         </div>
                         
                         <div style="text-align: center; margin-top: 30px;">

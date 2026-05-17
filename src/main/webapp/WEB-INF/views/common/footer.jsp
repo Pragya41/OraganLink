@@ -54,3 +54,4 @@
         </div>
     </div>
 </footer>
+<jsp:include page="modal.jsp" />

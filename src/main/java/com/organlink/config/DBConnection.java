@@ -12,6 +12,11 @@ public class DBConnection {
     private DBConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
+            try (Connection conn = getConnection()) {
+                initializeDatabase(conn);
+            } catch (SQLException e) {
+                System.err.println("DBConnection: failed to run auto-migrations: " + e.getMessage());
+            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("MySQL Driver not found", e);
         }
@@ -24,5 +29,24 @@ public class DBConnection {
     }
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+    private void initializeDatabase(Connection conn) throws SQLException {
+        try (java.sql.Statement stmt = conn.createStatement()) {
+            stmt.execute("CREATE TABLE IF NOT EXISTS contact_queries (" +
+                         "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                         "full_name VARCHAR(100) NOT NULL, " +
+                         "phone VARCHAR(15) NOT NULL, " +
+                         "query TEXT NOT NULL, " +
+                         "submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                         ")");
+            
+            stmt.execute("CREATE TABLE IF NOT EXISTS password_reset_tokens (" +
+                         "user_id INT PRIMARY KEY, " +
+                         "token VARCHAR(255) NOT NULL, " +
+                         "expires_at TIMESTAMP NOT NULL, " +
+                         "used TINYINT DEFAULT 0, " +
+                         "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
+                         ")");
+        }
     }
 }

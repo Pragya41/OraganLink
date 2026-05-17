@@ -64,11 +64,13 @@
                             <small style="display: block; margin-top: 10px; color: var(--text-muted);">Copy this code for the next step</small>
                         </div>
 
+                        <div id="frontendError" class="badge badge-danger" style="display: none; text-align: center; margin-bottom: 20px; padding: 10px;"></div>
+
                         <c:if test="${param.error == 'mismatch'}">
-                            <div class="badge badge-danger" style="display: block; text-align: center; margin-bottom: 20px; padding: 10px;">Passwords or token do not match.</div>
+                            <div class="badge badge-danger" id="backendError" style="display: block; text-align: center; margin-bottom: 20px; padding: 10px;">Passwords do not match.</div>
                         </c:if>
 
-                        <form method="post" action="${pageContext.request.contextPath}/reset">
+                        <form method="post" action="${pageContext.request.contextPath}/reset" onsubmit="return validatePasswords(this);">
                             
                             <div class="form-group">
                                 <label>Paste Reset Token *</label>
@@ -88,6 +90,24 @@
                             
                             <button type="submit" class="btn btn-primary btn-full" style="margin-top: 12px;">Reset My Password</button>
                         </form>
+
+                        <script>
+                            function validatePasswords(form) {
+                                const newPass = form.newPassword.value;
+                                const confirmPass = form.confirmPassword.value;
+                                const frontendError = document.getElementById('frontendError');
+                                const backendError = document.getElementById('backendError');
+                                
+                                if (backendError) backendError.style.display = 'none';
+                                
+                                if (newPass !== confirmPass) {
+                                    frontendError.style.display = 'block';
+                                    frontendError.textContent = 'Passwords do not match.';
+                                    return false;
+                                }
+                                return true;
+                            }
+                        </script>
                     </c:when>
 
                     <c:otherwise>

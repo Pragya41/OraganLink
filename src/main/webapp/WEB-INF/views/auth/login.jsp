@@ -66,8 +66,8 @@
                         </form>
 
                         <div class="auth-links">
-                            <a href="${pageContext.request.contextPath}/auth?action=showRegister">Create Account</a>
-                            <a href="${pageContext.request.contextPath}/auth?action=showReset">Forgot Password?</a>
+                            <a href="${pageContext.request.contextPath}/register">Create Account</a>
+                            <a href="${pageContext.request.contextPath}/reset">Forgot Password?</a>
                         </div>
                         
                         <div style="text-align: center; margin-top: 30px;">

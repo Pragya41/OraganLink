@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isAdmin || (isHospital && isOwner)) {
             if (deleteBtn) {
                 deleteBtn.onclick = function() {
-                    if (confirm('Are you sure you want to delete this record?')) {
+                    showModal('Delete Record', 'Are you sure you want to permanently delete this record?', function() {
                         const deleteForm = document.createElement('form');
                         deleteForm.method = 'post';
                         deleteForm.action = actionUrl.includes('admin') ? contextPath + '/admin' : actionUrl;
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         deleteForm.appendChild(idInput);
                         document.body.appendChild(deleteForm);
                         deleteForm.submit();
-                    }
+                    }, 'Delete', true);
                 };
             }
 
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (lockBtn) {
                 lockBtn.onclick = function() {
-                    if (confirm('Lock this account?')) {
+                    showModal('Lock Account', 'Are you sure you want to lock this account?', function() {
                         const form = document.createElement('form');
                         form.method = 'post';
                         form.action = contextPath + '/admin';
@@ -239,13 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         form.appendChild(roleInput);
                         document.body.appendChild(form);
                         form.submit();
-                    }
+                    }, 'Lock Account', true);
                 };
             }
 
             if (unlockBtn) {
                 unlockBtn.onclick = function() {
-                    if (confirm('Unlock this account?')) {
+                    showModal('Unlock Account', 'Are you sure you want to unlock this account?', function() {
                         const form = document.createElement('form');
                         form.method = 'post';
                         form.action = contextPath + '/admin';
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         form.appendChild(roleInput);
                         document.body.appendChild(form);
                         form.submit();
-                    }
+                    }, 'Unlock Account', false);
                 };
             }
         }
