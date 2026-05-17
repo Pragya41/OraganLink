@@ -118,8 +118,11 @@
                     </c:otherwise>
                 </c:choose>
 
-                <div class="auth-links" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center;">
+                <div class="auth-links" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; gap: 12px;">
                     <a href="${pageContext.request.contextPath}/login" style="font-weight: 600; color: var(--text-muted);">Back to Sign In</a>
+                    <a href="${pageContext.request.contextPath}/about" style="color: var(--text-muted); text-decoration: none; font-size: 0.95rem;">
+                        <i class="fa fa-arrow-left"></i> Back to About Us
+                    </a>
                 </div>
             </div>
         </div>

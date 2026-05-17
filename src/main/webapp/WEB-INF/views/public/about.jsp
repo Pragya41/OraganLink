@@ -86,7 +86,7 @@
     <div class="hero-section">
         <h1 class="hero-title">Connecting Lives, Inspiring Hope.</h1>
         <p class="hero-subtitle">
-            OrganLink Nepal is a centralized, secure platform dedicated to revolutionizing the organ donation and transplant process across Nepal. Our mission is to bridge the gap between generosity and need.
+            OrganLink Nepal is a centralized, secure platform dedicated to revolutionizing the organ donation and transplant process across Nepal. Our mission is to bridge the critical gap between generosity and need by providing a streamlined, transparent, and highly secure digital infrastructure. We empower individuals to leave a lasting legacy while equipping medical professionals with the real-time data they need to save lives efficiently.
         </p>
         <div class="cta-buttons">
             <a href="${pageContext.request.contextPath}/register" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 24px;">Join Our Mission</a>
@@ -96,25 +96,25 @@
 
     <div class="content-section">
         <div style="text-align: center; margin-bottom: 40px;">
-            <h2 style="font-size: 2.25rem; color: var(--text); font-weight: 800;">Our Core Goals</h2>
-            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 10px auto;">We believe in a transparent, efficient, and equitable healthcare system. Here is what drives us forward every day.</p>
+            <h2 style="font-size: 2.25rem; color: var(--text); font-weight: 800;">Our Core Goals & Vision</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 700px; margin: 10px auto;">We believe in a healthcare system where every organ donation is handled with the utmost respect, transparency, and urgency. Here is the foundation of what drives our platform forward.</p>
         </div>
 
         <div class="goal-grid">
             <div class="goal-card">
                 <i class="fa fa-shield goal-icon"></i>
-                <h3 style="margin-bottom: 15px;">Secure & Confidential</h3>
-                <p style="color: var(--text-muted);">We employ robust security protocols to ensure that all patient and donor data remains strictly confidential and protected against unauthorized access.</p>
+                <h3 style="margin-bottom: 15px;">Uncompromising Security</h3>
+                <p style="color: var(--text-muted);">Trust is the cornerstone of organ donation. We employ advanced security protocols, role-based access control, and stringent data encryption to ensure that all patient medical records and donor identities remain strictly confidential and protected against any unauthorized access at all times.</p>
             </div>
             <div class="goal-card">
                 <i class="fa fa-hospital-o goal-icon"></i>
-                <h3 style="margin-bottom: 15px;">Hospital Integration</h3>
-                <p style="color: var(--text-muted);">By providing medical facilities with a unified dashboard, we eliminate communication delays and streamline the entire transplant coordination workflow.</p>
+                <h3 style="margin-bottom: 15px;">Seamless Hospital Integration</h3>
+                <p style="color: var(--text-muted);">Time is the most critical factor in organ transplantation. By providing certified medical facilities and health authorities with a unified, real-time administrative dashboard, we eliminate bureaucratic communication delays, reduce manual paperwork, and radically streamline the entire cross-hospital coordination workflow.</p>
             </div>
             <div class="goal-card">
                 <i class="fa fa-handshake-o goal-icon"></i>
-                <h3 style="margin-bottom: 15px;">Empowering Donors</h3>
-                <p style="color: var(--text-muted);">We make it easier for heroic individuals to pledge their organs, giving them full control over their legacy and connecting them directly with certified facilities.</p>
+                <h3 style="margin-bottom: 15px;">Empowering Everyday Heroes</h3>
+                <p style="color: var(--text-muted);">We make it incredibly simple for heroic individuals to register and pledge their organs. By giving donors a transparent platform to officially record their intentions, we put them in full control of their legacy, seamlessly connecting their generosity directly with the certified facilities that facilitate life-saving procedures.</p>
             </div>
         </div>
     </div>
