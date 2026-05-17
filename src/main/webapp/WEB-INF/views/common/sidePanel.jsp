@@ -8,6 +8,7 @@
         <button class="close-panel" id="closePanel">&times;</button>
     </div>
     <div class="side-panel-body">
+        <div id="sidePanelAlert" class="alert alert-danger" style="display: none; margin-bottom: 16px;"></div>
         <form id="sidePanelForm" method="post" action="">
             <div id="dynamicFields">
                 <!-- Fields will be populated here -->
@@ -68,11 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const rows = table.querySelectorAll('tbody tr');
         
         rows.forEach(row => {
-            // Skip "No content" rows
             if (row.querySelector('.text-center') && row.cells.length === 1) return;
 
             row.addEventListener('click', function(e) {
-                // Don't open if clicking on a button or link inside the row
                 if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('button') || e.target.closest('form')) {
                     return;
                 }
@@ -89,10 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let actionUrl = window.location.pathname;
         panelForm.action = actionUrl;
 
-        // Ownership check for Hospitals
         let isOwner = true;
         if (isHospital) {
-            // Default to false for announcements unless verified or in personal table
             if (tableId === 'annTable' || tableId === 'noticeTable') {
                 isOwner = false;
                 const authorIndex = headers.findIndex(h => h.toLowerCase() === 'author');
@@ -102,9 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     isOwner = (authorName === currentTitle);
                 }
             } else if (tableId === 'myAnnTable' || tableId === 'organTable') {
-                isOwner = true; // Assume owner if in "My" table
+                isOwner = true;
             } else if (tableId === 'allOrgansTable') {
-                isOwner = false; // Cannot edit others' organs
+                isOwner = false;
             }
         }
 
@@ -113,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 adminActions.style.setProperty('display', 'flex', 'important');
                 if (closeBtnFooter) closeBtnFooter.innerText = 'Cancel';
                 
-                // Show/Hide Lock buttons for users
                 if (isAdmin && (tableId === 'memberTable' || tableId === 'hospitalTable')) {
                     lockBtn.style.display = 'block';
                     unlockBtn.style.display = 'block';
@@ -157,22 +153,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.readOnly = true;
             }
             
-            // Handle specific ID fields for update/delete
             if (header.toLowerCase() === 'id') {
                 panelIdInput.value = value;
-                input.readOnly = true; // Never edit primary ID directly
+                input.readOnly = true;
                 input.name = 'id';
             }
 
-            // Fields that cannot be edited or updated
             const uneditableFields = ['username', 'license', 'registered', 'requested', 'date'];
             if (uneditableFields.includes(header.toLowerCase())) {
                 input.readOnly = true;
-                input.classList.add('read-only-field'); // Optional: add a class for styling
+                input.classList.add('read-only-field');
             }
-
-            // Custom mapping for specific tables if needed
-            // Default: header "Full Name" -> input name "full_name"
             
             group.appendChild(input);
             dynamicFields.appendChild(group);
@@ -184,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (confirm('Are you sure you want to delete this record?')) {
                         const deleteForm = document.createElement('form');
                         deleteForm.method = 'post';
-                        // Ensure it goes to the right controller
                         deleteForm.action = actionUrl.includes('admin') ? contextPath + '/admin' : actionUrl;
                         
                         const actionInput = document.createElement('input');
@@ -196,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         else if (tableId === 'annTable' || tableId === 'noticeTable' || tableId === 'myAnnTable') actionInput.value = 'deleteAnnouncement';
                         else if (tableId === 'organTable') actionInput.value = 'deleteOrgan';
                         else if (tableId === 'requestTable') actionInput.value = 'deleteRequest';
+                        else if (tableId === 'myReqTable') actionInput.value = 'deleteRequest';
                         else actionInput.value = 'delete';
 
                         const idInput = document.createElement('input');
@@ -220,26 +211,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (lockBtn) {
                 lockBtn.onclick = function() {
-                    if (confirm('Lock this account? User will not be able to login.')) {
+                    if (confirm('Lock this account?')) {
                         const form = document.createElement('form');
                         form.method = 'post';
                         form.action = contextPath + '/admin';
-                        
                         const actionInput = document.createElement('input');
                         actionInput.type = 'hidden';
                         actionInput.name = 'action';
                         actionInput.value = 'lockUser';
-
                         const idInput = document.createElement('input');
                         idInput.type = 'hidden';
                         idInput.name = 'id';
                         idInput.value = panelIdInput.value;
-
                         const roleInput = document.createElement('input');
                         roleInput.type = 'hidden';
                         roleInput.name = 'role';
                         roleInput.value = tableId === 'memberTable' ? 'MEMBER' : 'HOSPITAL';
-
                         form.appendChild(actionInput);
                         form.appendChild(idInput);
                         form.appendChild(roleInput);
@@ -255,22 +242,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         const form = document.createElement('form');
                         form.method = 'post';
                         form.action = contextPath + '/admin';
-                        
                         const actionInput = document.createElement('input');
                         actionInput.type = 'hidden';
                         actionInput.name = 'action';
                         actionInput.value = 'unlockUser';
-
                         const idInput = document.createElement('input');
                         idInput.type = 'hidden';
                         idInput.name = 'id';
                         idInput.value = panelIdInput.value;
-
                         const roleInput = document.createElement('input');
                         roleInput.type = 'hidden';
                         roleInput.name = 'role';
                         roleInput.value = tableId === 'memberTable' ? 'MEMBER' : 'HOSPITAL';
-
                         form.appendChild(actionInput);
                         form.appendChild(idInput);
                         form.appendChild(roleInput);
@@ -283,6 +266,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (sidePanel) sidePanel.classList.add('open');
         if (overlay) overlay.style.display = 'block';
+    }
+
+    // Form Validation Logic
+    if (panelForm) {
+        panelForm.addEventListener('submit', function(e) {
+            const inputs = this.querySelectorAll('input, select');
+            let fullNameVal = '', emailVal = '', phoneVal = '';
+            
+            inputs.forEach(input => {
+                const name = input.name.toLowerCase();
+                const val = input.value.trim();
+                if (name.includes('full_name') || name.includes('hospital_name')) fullNameVal = val;
+                if (name.includes('email')) emailVal = val;
+                if (name.includes('phone')) phoneVal = val;
+            });
+
+            function showSidePanelError(msg) {
+                const spAlert = document.getElementById('sidePanelAlert');
+                if (spAlert) {
+                    spAlert.style.display = 'block';
+                    spAlert.innerText = msg;
+                }
+            }
+
+            if (fullNameVal && /\d/.test(fullNameVal)) {
+                showSidePanelError('Full Name must not contain digits.');
+                e.preventDefault();
+                return;
+            }
+            if (emailVal) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailVal)) {
+                    showSidePanelError('Enter valid email.');
+                    e.preventDefault();
+                    return;
+                }
+            }
+            if (phoneVal) {
+                const phoneRegex = /^\d{10}$/;
+                if (!phoneRegex.test(phoneVal)) {
+                    showSidePanelError('Phone number must be exactly 10 digits.');
+                    e.preventDefault();
+                    return;
+                }
+            }
+        });
     }
 });
 </script>

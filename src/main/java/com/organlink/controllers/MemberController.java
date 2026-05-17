@@ -134,12 +134,22 @@ public class MemberController extends HttpServlet {
 
                 case "submitRequest": {
                     int organId = Integer.parseInt(req.getParameter("organId"));
-
                     boolean ok = reqSvc.submitRequest(userId, organId);
                     String msg = ok ? "submitted" : "duplicate";
+                    resp.sendRedirect(req.getContextPath() + "/member/myRequests?msg=" + msg);
+                    break;
+                }
 
-                    resp.sendRedirect(req.getContextPath()
-                            + "/member/myRequests?msg=" + msg);
+                case "deleteRequest": {
+                    int id = Integer.parseInt(req.getParameter("id"));
+                    // Verify ownership
+                    com.organlink.model.DonationRequest r = reqDao.findById(id);
+                    if (r != null && r.getMemberId() == userId) {
+                        reqDao.deleteRequest(id);
+                        resp.sendRedirect(req.getContextPath() + "/member/myRequests?msg=deleted");
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/member/myRequests?msg=error");
+                    }
                     break;
                 }
 

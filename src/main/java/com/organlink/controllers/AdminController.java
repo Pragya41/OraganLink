@@ -3,6 +3,7 @@ package com.organlink.controllers;
 import com.organlink.dao.*;
 import com.organlink.model.*;
 import com.organlink.service.DashboardService;
+import com.organlink.service.AuthService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,6 +22,7 @@ public class AdminController extends HttpServlet {
     private final DonationRequestDao reqDao = new DonationRequestDao();
     private final AnnouncementDao annDao = new AnnouncementDao();
     private final DashboardService dash = new DashboardService();
+    private final AuthService authService = new AuthService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -285,6 +287,7 @@ public class AdminController extends HttpServlet {
                 case "unlockUser": {
                     int id = Integer.parseInt(req.getParameter("id"));
                     userDao.setLockStatus(id, false);
+                    authService.resetAttempts(id); // Clear automatic lockout
                     String role = req.getParameter("role");
                     String redirect = "/admin/home";
                     if ("HOSPITAL".equals(role)) redirect = "/admin/hospitals";

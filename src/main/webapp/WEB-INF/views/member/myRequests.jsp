@@ -15,6 +15,16 @@
         <div class="page-header">
             <h1>My Donation Requests</h1>
         </div>
+
+        <c:if test="${param.msg == 'submitted'}">
+            <div class="alert alert-success">Request submitted successfully!</div>
+        </c:if>
+        <c:if test="${param.msg == 'duplicate'}">
+            <div class="alert alert-danger">You already have a pending or approved request for this organ.</div>
+        </c:if>
+        <c:if test="${param.msg == 'deleted'}">
+            <div class="alert alert-success">Request deleted successfully.</div>
+        </c:if>
         <div class="card">
             <table class="data-table" id="myReqTable">
                 <thead>
