@@ -78,11 +78,11 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>New Password *</label>
-                                    <input type="password" name="newPassword" class="form-control" required placeholder="••••••••"/>
+                                    <input type="password" name="newPassword" class="form-control" required placeholder="Enter new password"/>
                                 </div>
                                 <div class="form-group">
                                     <label>Confirm Password *</label>
-                                    <input type="password" name="confirmPassword" class="form-control" required placeholder="••••••••"/>
+                                    <input type="password" name="confirmPassword" class="form-control" required placeholder="Confirm new password"/>
                                 </div>
                             </div>
                             
